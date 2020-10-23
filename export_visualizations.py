@@ -23,9 +23,6 @@ raw_file = "2019-2020_mood-sleep-data-ONESHEET_updated-to-2020-06-30 - Sheet1.cs
 raw_filename = raw_folder + raw_file
 
 
-# %%
-#FUNCTIONS TO PROCESS ROW VALUES
-
 def get_block(test_date):
     """returns a string of the block that contains the given datetime"""
     b1_start = datetime.strptime("September 09, 2019", "%B %d, %Y")
@@ -97,9 +94,6 @@ def workout_str(value):
     else:
         string = "No workout"
     return string
-
-# %%
-#FUNCTIONS TO CREATE DATAFRAMES
 
 def preprocess_df(filename, col_list=None):
     """returns the formatted dataframe with columns from col_list.
@@ -182,12 +176,6 @@ def get_courses_df(full_df):
     return block_df
 
 
-# %%
-"""
-## CREATE DATAFRAMES
-"""
-
-# %%
 def create_full_df(filename):
     """returns df with only the rows from the course blocks (formats time columns)"""
     
@@ -209,7 +197,6 @@ def create_full_df(filename):
     
     return df
 
-# %%
 def create_courses_df(filename):
     """create the final courses df"""
     
@@ -231,59 +218,23 @@ def create_courses_df(filename):
     return courses_df
     
     
-
-# %%
 def create_agg_df(df, grouping_col, agg_type):
     """returns the the aggregated function""" 
     return df.groupby([grouping_col]).agg(agg_type).reset_index()
 
 
 
-
-# %%
 def create_corr_df(df, col_list):
     """return the correlation matrix for a given dataframe's specified columns"""
     return df[col_list].corr()
 
 
 
-# %%
-#create full dataframe
-df = create_full_df(raw_filename)
-df.head()
-
-# %%
-#courses df = all info from rows in course blocks of MDS-CL = 210 days
-
-courses_df = create_courses_df(raw_filename)
-courses_df.head()
-
-# %%
-
-#specific visualization dataframes
-sleep_df = create_corr_df(courses_df, ["yellow_glasses", "meditate", "foot_soak", "read", "sleep_hrs"])
-mood_per_blockday_df = create_agg_df(courses_df, "blockday","mean" )
-coffee_df = create_agg_df(courses_df, "dayname", "sum")
-workout_df = create_agg_df(courses_df, "workout", "count")
-
-# %%
-"""
-## VISUALIZATION CODE
-
-"""
-
-# %%
-
-
-# %%
-#colors = n_colors('rgb(5, 200, 200)', 'rgb(200, 10, 10)', 7, colortype='rgb')
-
 def make_sleep_ridgeplot(df):
     """returns the visualization - hours of sleep per weekday
     
     Assume df contains columns: 'sleep_hrs' and 'dayname'
     """
-    #hk_BluGrn = n_colors('rgb(68, 149, 189)','rgb(0, 172, 145)',  7, colortype='rgb')
     colors = n_colors('rgb(68, 149, 189)','rgb(0, 172, 145)',  7, colortype='rgb')
     daynames = ['Sunday', 'Saturday', 'Friday', 'Thursday', 'Wednesday', 'Tuesday', 'Monday']
 
@@ -308,11 +259,9 @@ def make_sleep_ridgeplot(df):
     
     return fig
     
-# sleep_ridge = make_sleep_ridgeplot(df)
-# sleep_ridge
 
-# %%
-def make_wake_ridgeplot(df):
+
+def make_wake_ridgeplot(courses_df):
     """returns the following viz: waketime per day of week"""
     daynames = ['Sunday', 'Saturday', 'Friday', 'Thursday', 'Wednesday', 'Tuesday', 'Monday']
     colors = n_colors('rgb(68, 149, 189)','rgb(0, 172, 145)',  7, colortype='rgb')
@@ -346,7 +295,6 @@ def make_wake_ridgeplot(df):
     # fig.show()
     return fig
 
-# %%
 def make_corr_heatmap(corrs):
     """return correlation heatmap for sleep habits"""
     
@@ -376,11 +324,8 @@ def make_corr_heatmap(corrs):
         )
     )
 
-
-    #fig.show()
     return fig
 
-# %%
 def make_daily_heatmap(courses_df):
     """return heatmap visualization for daily mood per course week"""
     colors = [[0, "rgb(140, 31, 34)"], [0.5, "rgb(247, 247, 248)"], [1.0, "rgb(65, 135, 174)"]]
@@ -401,7 +346,6 @@ def make_daily_heatmap(courses_df):
     
     return fig 
 
-# %%
 def make_avg_mood_linechart(mood_per_blockday_df): 
     fig = go.Figure()
 
@@ -460,11 +404,9 @@ def make_avg_mood_linechart(mood_per_blockday_df):
     fig.update_yaxes(range=[1.75, 3.75])
     fig.update_yaxes(showline=True, linewidth=2, linecolor='black')
     fig.update_xaxes(showline=True, linewidth=2, linecolor='black')
-    #fig.show()
     
     return fig
 
-# %%
 def make_block_heatmap(courses_df):
     """return mood per course block visualization"""
     colors = [[0, "rgb(140, 31, 34)"], [0.5, "rgb(247, 247, 248)"], [1.0, "rgb(65, 135, 174)"]]
@@ -497,7 +439,6 @@ def make_block_heatmap(courses_df):
 
     return fig
 
-# %%
 def make_workout_pie(workout_df):
     """Make pie chart visualization for student habits """
     
@@ -515,21 +456,17 @@ def make_workout_pie(workout_df):
 
     return fig
 
-# %%
 def make_coffee_barchart(courses_df_sum):
+    """make visualization """
     daynames = ['Monday', 'Tuesday', "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     colors = n_colors('rgb(68, 149, 189)','rgb(0, 172, 145)',  7, colortype='rgb')
     vals_coffee = []
-    #vals_meal = []
     fig = go.Figure()
 
     for i in range(len(daynames)):
         day = daynames[i]
         val_c = courses_df_sum["coffees"][courses_df_sum["dayname"]==day]
         vals_coffee.append(val_c.values[0])
-
-    #     val_h = courses_df_sum["hot_meal"][courses_df_sum["dayname"]==day]
-    #     vals_meal.append(val_h.values[0])
 
     fig = go.Figure(data=[
         go.Bar(name="coffee", x=daynames, y=vals_coffee, marker_color = colors)
@@ -541,10 +478,8 @@ def make_coffee_barchart(courses_df_sum):
                     barmode="group")
     fig.update_yaxes(showline=True, linewidth=2, linecolor='black')
     fig.update_xaxes(showline=True, linewidth=2, linecolor='black')
-    #fig.show()
     return fig
 
-# %%
 def make_phone_violinplot(courses_df):
     fig = go.Figure()
     overall_mood = ["bad", "neutral", "good"]
@@ -570,8 +505,6 @@ def make_phone_violinplot(courses_df):
     fig.update_yaxes(showline=True, linewidth=2, linecolor='black', range=[-0, 10])
     fig.update_xaxes(showline=True, linewidth=2, linecolor='black')
     return fig
-
-# %%
 
 def make_phone_linechart(df):
     """return visualization for phone use over time chart"""
@@ -616,22 +549,30 @@ def make_phone_linechart(df):
         title="Phone use over grad program's duration",
         xaxis_title="Date",
         yaxis_title="Daily phone use (hours)",
-        #paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
     )
 
     fig.update_yaxes(showline=True, linewidth=2, linecolor='black')
     fig.update_xaxes(showline=True, linewidth=2, linecolor='black')
 
-    #fig.show()
     return fig
 
 
 
 
-# %%
 def main():
     """creates the main visualizations - export to 'export' folder"""
+    #create full dataframe
+    df = create_full_df(raw_filename)
+
+    #create dataframe containing rows from course-block months (exclude holidays, capstone)
+    courses_df = create_courses_df(raw_filename)
+
+    #specific visualization dataframes
+    sleep_df = create_corr_df(courses_df, ["yellow_glasses", "meditate", "foot_soak", "read", "sleep_hrs"])
+    mood_per_blockday_df = create_agg_df(courses_df, "blockday","mean" )
+    coffee_df = create_agg_df(courses_df, "dayname", "sum")
+    workout_df = create_agg_df(courses_df, "workout", "count")
     final_figs = []
 
     final_figs.append(make_sleep_ridgeplot(df))
@@ -655,27 +596,8 @@ def main():
             f.write(scope.transform(fig, format="png"))
 
 
-# %%
-#main()
+
 if __name__ == '__main__':
     main()
     print("SAVE COMPLETE: visualizations in 'exports' folder")
 
-# %%
-#CREATE COLOUR PALETTES: BASED ON IMAGE: https://www.expats.hk/wp-content/uploads/2015/10/green_red_blue_taxi.jpg
-
-# # hk_light_3 = [[0, "rgb(215, 85, 90)"], [0.5, "rgb(0, 172, 145)"], [1.0, "rgb(134, 236, 251)"]]
-# # hk_light_2 = [[0, "rgb(215, 85, 90)"], [0.5, "rgb(247, 247, 248)"], [1.0, "rgb(134, 236, 251)"]]
-
-# # hk_dark_3 = [[0, "rgb(140, 31, 34)"], [0.5, "rgb(19, 113, 94)"], [1.0, "rgb(65, 135, 174)"]]
-# hk_dark_2 = [[0, "rgb(140, 31, 34)"], [0.5, "rgb(247, 247, 248)"], [1.0, "rgb(65, 135, 174)"]]
-
-# # hk_div3 = [[0, "rgb(165, 38, 45)"], [0.5, "rgb(0, 172, 145)"], [1.0, "rgb(134, 236, 251)"]]
-# # hk_div2 = [[0, "rgb(165, 38, 45)"], [0.5, "rgb(247, 247, 248)"], [1.0, "rgb(134, 236, 251)"]]
-
-# # hk_con = [[0, "rgb(0, 172, 145)"], [0.5, "rgb(247, 247, 248)"], [1.0, "rgb(134, 236, 251)"]]
-
-# hk_BluGrn = n_colors('rgb(68, 149, 189)','rgb(0, 172, 145)',  7, colortype='rgb')
-# # hk_RdBlu = n_colors('rgb(140, 31, 34)', 'rgb(134, 236, 251)', 7, colortype='rgb')
-
-# # hk_BluGrn5 = n_colors('rgb(68, 149, 189)','rgb(0, 172, 145)',  5, colortype='rgb')
