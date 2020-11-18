@@ -4,6 +4,8 @@
 
 The following is a series of visualizations detailing my experience as part of the first cohort of the Master of Data Science — Computational Linguistics program at UBC (2019–2020). These visualizations were created to answer questions that I had coming into this unique program. My hope is that future students will benefit from knowing what the program is like, or at least try to get prioritize their mental health during their studies.
 
+Note: dataset used for visualizations is omitted from this version of the project for privacy reasons.
+
 For questions and comments, please contact me at [my LinkedIn profile](https://www.linkedin.com/in/jonathan-tk-chan/).
 
 # Main Visualizations
@@ -17,6 +19,7 @@ For questions and comments, please contact me at [my LinkedIn profile](https://w
 
 ## LinkedIn
 
+[full article](https://www.linkedin.com/pulse/10-data-visualizations-surviving-grad-school-jonathan-chan/?trackingId=TQl4ENc4MsXvYLZx74YxUg%3D%3D)
 
 # Extras
 
@@ -26,7 +29,6 @@ For questions and comments, please contact me at [my LinkedIn profile](https://w
 [Notes to future MDS students](https://jonathan-tk-chan.medium.com/notes-to-self-graduate-school-333baab36010)
 
 # To do
-- add total article - LinkedIn
 - add instructions
 - add requirements.txt
-- add dummy version of data?
+- Optional: add dummy version of data
